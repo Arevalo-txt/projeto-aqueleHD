@@ -29,12 +29,12 @@ const Layout = ({ children }: LayoutProps) => {
             content: '""',
             position: "absolute",
             inset: 0,
-            backgroundImage: "url('/img/Logomascotehotdog.png')",
-            backgroundSize: "45%",
-            backgroundPosition: "95% 5%",
+            backgroundImage: "url('/img/ball-park-brand-RKQ4-Q5FF-o-unsplash.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
-            opacity: 0.07,
-            filter: "blur(1px) saturate(0.6)",
+            opacity: 0.18,
+            filter: "blur(2px) saturate(1.2)",
             zIndex: 0,
             pointerEvents: "none",
           }}
@@ -43,7 +43,7 @@ const Layout = ({ children }: LayoutProps) => {
             position: "absolute",
             inset: 0,
             background:
-              "radial-gradient(ellipse at 80% 5%, rgba(200,90,0,0.18) 0%, transparent 45%), radial-gradient(ellipse at 95% 20%, rgba(230,160,0,0.12) 0%, transparent 35%)",
+              "linear-gradient(to bottom, rgba(11,17,32,0.55) 0%, rgba(11,17,32,0.3) 40%, rgba(11,17,32,0.7) 100%)",
             zIndex: 0,
             pointerEvents: "none",
           }}
