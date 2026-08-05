@@ -291,7 +291,7 @@ const EquipePage = () => {
               <FormControl isRequired>
                 <FormLabel color="gray.400" fontSize="sm">Email de Acesso</FormLabel>
                 <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                  placeholder="funcionario@aquelehotdogs.com"
+                  placeholder="funcionario@hotdogstation.com"
                   bg="whiteAlpha.50" border="1px solid" borderColor="brand.surfaceborder" borderRadius="xl"
                   _focus={{ borderColor: "brand.primary" }} />
               </FormControl>

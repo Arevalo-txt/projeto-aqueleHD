@@ -157,14 +157,14 @@ const SplashScreen = ({ isVisible }: SplashScreenProps) => {
           </Box>
 
           <Text
-            fontFamily="'Bubblegum Sans', cursive"
-            fontSize={{ base: "2xl", md: "3xl" }}
+            fontFamily="'Press Start 2P', monospace"
+            fontSize={{ base: "md", md: "lg" }}
             bgGradient="linear(to-r, #FF6B00, #FFD700)"
             bgClip="text"
-            letterSpacing="widest"
             textAlign="center"
+            lineHeight={1.6}
           >
-            Aquele Hot Dogs
+            HOT DOG<br />STATION
           </Text>
 
           <Flex gap={3} align="center">

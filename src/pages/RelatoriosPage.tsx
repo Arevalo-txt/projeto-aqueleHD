@@ -291,7 +291,7 @@ const RelatoriosPage = () => {
     
     doc.setFontSize(11)
     doc.setFont("helvetica", "normal")
-    doc.text(`Aquele Hot Dogs - Emissão: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`, 14, 28)
+    doc.text(`Hot Dog Station - Emissão: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`, 14, 28)
     doc.text(`Período analisado: ${formatarData(inicioFiltro)} até ${formatarData(fimFiltro)}`, 14, 34)
 
     // Resumo

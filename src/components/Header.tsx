@@ -1,4 +1,4 @@
-import { Box, Heading, Flex, Avatar, IconButton } from "@chakra-ui/react"
+import { Box, Flex, Avatar, IconButton } from "@chakra-ui/react"
 import { FiBell, FiSettings, FiMenu } from "react-icons/fi"
 import { useData } from "../context/DataContext"
 
@@ -13,8 +13,8 @@ const Header = ({ onMenuOpen }: HeaderProps) => {
     <Box
       as="header"
       w="100%"
-      px={{ base: 4, md: 8 }}
-      py={{ base: 3, md: 4 }}
+      px={{ base: 4, md: 6 }}
+      py={3}
       bg="brand.surface"
       backdropFilter="blur(16px)"
       sx={{ WebkitBackdropFilter: "blur(16px)" }}
@@ -23,36 +23,24 @@ const Header = ({ onMenuOpen }: HeaderProps) => {
       position="sticky"
       top={0}
       zIndex={10}
-      boxShadow="0 4px 30px rgba(0, 0, 0, 0.1)"
+      boxShadow="0 4px 30px rgba(0, 0, 0, 0.15)"
     >
-      <Flex justify="space-between" align="center" gap={2}>
-        <Flex align="center" gap={2}>
-          <IconButton
-            display={{ base: "flex", md: "none" }}
-            aria-label="Abrir menu"
-            icon={<FiMenu />}
-            variant="ghost"
-            color="white"
-            size="sm"
-            onClick={onMenuOpen}
-            _hover={{ bg: "whiteAlpha.200" }}
-          />
-          <Heading
-            as="h1"
-            fontSize={{ base: "xl", md: "3xl" }}
-            fontFamily="'Bubblegum Sans', cursive"
-            letterSpacing="wider"
-            bgGradient="linear(to-r, brand.primary, brand.secondary)"
-            bgClip="text"
-            textShadow="0 0 20px rgba(255, 107, 0, 0.2)"
-          >
-            Aquele Hot Dogs
-          </Heading>
-        </Flex>
+      <Flex justify="space-between" align="center">
+        {/* Mobile hamburger */}
+        <IconButton
+          display={{ base: "flex", md: "none" }}
+          aria-label="Abrir menu"
+          icon={<FiMenu />}
+          variant="ghost"
+          color="white"
+          size="sm"
+          onClick={onMenuOpen}
+          _hover={{ bg: "whiteAlpha.200" }}
+        />
 
-        <Flex align="center" gap={{ base: 1, md: 4 }}>
+        {/* Right icons — alinhados à direita mesmo no desktop */}
+        <Flex align="center" gap={1} ml="auto">
           <IconButton
-            display={{ base: "none", md: "flex" }}
             aria-label="Notificações"
             icon={<FiBell />}
             variant="ghost"
@@ -61,7 +49,6 @@ const Header = ({ onMenuOpen }: HeaderProps) => {
             isRound
           />
           <IconButton
-            display={{ base: "none", md: "flex" }}
             aria-label="Configurações"
             icon={<FiSettings />}
             variant="ghost"
@@ -75,6 +62,7 @@ const Header = ({ onMenuOpen }: HeaderProps) => {
             bg="brand.primary"
             border="2px solid"
             borderColor="brand.secondary"
+            ml={1}
           />
         </Flex>
       </Flex>

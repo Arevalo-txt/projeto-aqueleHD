@@ -514,7 +514,7 @@ const PagamentoPage = () => {
                     <QRCodeSVG
                       value={(() => {
                         const comprovanteData = {
-                          estabelecimento: "Aquele Hot Dogs",
+                          estabelecimento: "Hot Dog Station",
                           comanda: `#${pedidoId}`,
                           cliente: pedido.cliente,
                           mesa: pedido.mesa,

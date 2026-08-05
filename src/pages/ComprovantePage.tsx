@@ -99,7 +99,7 @@ const ComprovantePage = () => {
               color="white"
               letterSpacing="wide"
             >
-              Aquele Hot Dogs
+              Hot Dog Station
             </Text>
             <Flex align="center" gap={2} color="#48bb78" mt={1}>
               <Icon as={FiCheckCircle} boxSize={4} />

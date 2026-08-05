@@ -158,7 +158,7 @@ const HomePage = () => {
             {isAdmin ? "Painel de Controle" : `Olá, ${currentUser?.nome?.split(' ')[0]}!`}
           </Heading>
           <Text color="gray.400" mt={1} fontSize={{ base: "sm", md: "md" }}>
-            {isAdmin ? "Visão geral do Aquele Hot Dogs" : "Bom turno de trabalho! Veja como estamos:"}
+            {isAdmin ? "Visão geral do Hot Dog Station" : "Bom turno de trabalho! Veja como estamos:"}
           </Text>
         </Box>
         <Button

@@ -38,7 +38,7 @@ const LoginPage = () => {
       if (success) {
         toast({
           title: "Acesso Permitido",
-          description: "Bem-vindo ao Aquele Hot Dogs!",
+          description: "Bem-vindo ao Hot Dog Station!",
           status: "success",
           duration: 3000,
           isClosable: true,
@@ -86,8 +86,16 @@ const LoginPage = () => {
         <VStack spacing={8} as="form" onSubmit={handleLogin}>
           <VStack spacing={2} textAlign="center">
             <Text fontSize="4xl">🌭</Text>
-            <Heading size="lg" color="white">
-              Aquele Hot Dogs
+            <Heading
+              size="sm"
+              color="white"
+              fontFamily="'Press Start 2P', monospace"
+              bgGradient="linear(to-r, brand.primary, brand.secondary)"
+              bgClip="text"
+              lineHeight={1.6}
+              textAlign="center"
+            >
+              HOT DOG<br />STATION
             </Heading>
             <Text color="gray.400" fontSize="md">
               Faça login no sistema de gestão
