@@ -8,6 +8,7 @@ import {
   Text,
   Button,
   Flex,
+  Icon,
   useDisclosure,
   Modal,
   ModalOverlay,
@@ -24,12 +25,21 @@ import {
   InputLeftElement,
   Spinner,
 } from "@chakra-ui/react"
-import { motion } from "framer-motion"
+import { motion, Variants } from "framer-motion"
 import { Link as RouterLink } from "react-router-dom"
 import { FiEdit, FiCreditCard, FiPlus, FiMinus, FiTag, FiTrash2, FiSearch, FiRefreshCw } from "react-icons/fi"
 import { useData, type Pedido } from "../context/DataContext"
 
 const MotionBox = motion(Box)
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.06 } },
+}
+const itemVariants: Variants = {
+  hidden: { y: 12, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 300, damping: 24 } },
+}
 
 const PedidosPage = () => {
   const toast = useToast()
@@ -232,21 +242,27 @@ const PedidosPage = () => {
         </Flex>
       </Flex>
 
-      <Box variant="glass" borderRadius="2xl" p={{ base: 3, md: 6 }} minH="400px">
+      <Box
+        bg="whiteAlpha.50"
+        border="1px solid"
+        borderColor="brand.surfaceborder"
+        borderRadius="2xl"
+        p={{ base: 3, md: 6 }}
+        minH="400px"
+      >
         {isRefreshing ? (
           <Flex justify="center" align="center" h="100%" py={20}>
             <Spinner color="brand.primary" size="xl" thickness="4px" />
           </Flex>
         ) : (
+          <motion.div variants={containerVariants} initial="hidden" animate="visible">
           <VStack spacing={3} align="stretch">
             {filteredPedidos.length > 0 ? (
-              filteredPedidos.map((pedido, index) => (
+              filteredPedidos.map((pedido) => (
                 <MotionBox
                   key={pedido.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ scale: 1.01, backgroundColor: "rgba(255,107,0,0.1)" }}
+                  variants={itemVariants}
+                  whileHover={{ y: -2, boxShadow: "0 4px 24px rgba(255,107,0,0.15)", transition: { duration: 0.15 } }}
                   bg="whiteAlpha.50"
                   p={4}
                   borderRadius="xl"
@@ -339,11 +355,13 @@ const PedidosPage = () => {
                 </MotionBox>
               ))
             ) : (
-              <Box p={10} textAlign="center">
-                <Text color="gray.400" fontSize="lg">Nenhuma comanda encontrada para esta busca.</Text>
-              </Box>
+              <Flex align="center" justify="center" py={16} flexDir="column" gap={3}>
+                <Icon as={FiSearch} color="gray.600" boxSize={10} />
+                <Text color="gray.500" fontSize="lg">Nenhuma comanda encontrada</Text>
+              </Flex>
             )}
           </VStack>
+          </motion.div>
         )}
       </Box>
 

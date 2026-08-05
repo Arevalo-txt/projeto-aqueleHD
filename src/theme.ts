@@ -18,8 +18,8 @@ export const theme = extendTheme({
     },
   },
   fonts: {
-    heading: "'Bubblegum Sans', cursive, sans-serif",
-    body: "Poppins, sans-serif",
+    heading: "'Bebas Neue', sans-serif",
+    body: "'DM Sans', sans-serif",
   },
   styles: {
     global: {
@@ -94,7 +94,9 @@ export const theme = extendTheme({
     },
     Heading: {
       baseStyle: {
-        letterSpacing: "wider",
+        fontFamily: "'Bebas Neue', sans-serif",
+        letterSpacing: "0.06em",
+        fontWeight: "400",
       }
     }
   },
