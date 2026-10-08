@@ -192,29 +192,37 @@ const NovoPedidoPage = () => {
     setClienteSugestoes([])
   }
 
-  const salvarNovoCliente = () => {
+  const salvarNovoCliente = async () => {
     if (!cliente.trim() || !telefoneCliente.trim()) {
       toast({ title: "Erro", description: "Preencha o nome e telefone do cliente", status: "error", duration: 3000, isClosable: true })
       return
     }
-    const novoCliente = addCliente({ nome: cliente, telefone: telefoneCliente, historicoPedidos: [] })
+    let novoCliente: Cliente
+    try {
+      novoCliente = await addCliente({ nome: cliente, telefone: telefoneCliente, historicoPedidos: [] })
+    } catch {
+      return
+    }
     setClienteExistente(novoCliente)
     toast({ title: "Cadastrado", description: `Cliente cadastrado!`, status: "success", duration: 3000 })
     onClientClose()
   }
 
-  const salvarComanda = () => {
+  const salvarComanda = async () => {
     if (itensPedido.length === 0 || !cliente || !mesa) {
       toast({ title: "Atenção", description: "Preencha cliente, mesa e adicione pelo menos um item.", status: "warning", duration: 3000, isClosable: true })
       return
     }
 
+    // O total exibido é uma prévia: o valor definitivo é calculado pelo servidor
     const valorTotal = calcularTotal()
-    const novoPedido = addPedido({
+    try {
+      await addPedido({
       clienteId: clienteExistente?.id,
       mesa,
       cliente,
       itens: itensPedido.map((item) => ({
+        produtoId: item.produto.id,
         nome: item.produto.nome,
         quantidade: item.quantidade,
         preco: calcularPrecoUnitarioItem(item),  // Preço unitário já inclui adicionais
@@ -226,7 +234,10 @@ const NovoPedidoPage = () => {
       status: "aberto",
       timestamp: new Date(),
       valorTotal,
-    })
+      })
+    } catch {
+      return
+    }
 
     toast({ title: "Sucesso!", description: `Comanda criada.`, status: "success", duration: 3000 })
     navigate(`/pedidos`)

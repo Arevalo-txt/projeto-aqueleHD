@@ -83,10 +83,14 @@ const PedidosPage = () => {
     onOpen()
   }
 
-  const fecharComanda = (id: number) => {
+  const fecharComanda = async (id: number) => {
     const pedido = pedidos.find((p) => p.id === id)
     if (pedido) {
-      updatePedido({ ...pedido, status: "fechado" })
+      try {
+        await updatePedido({ ...pedido, status: "fechado" })
+      } catch {
+        return
+      }
       setSelectedPedido({ ...pedido, status: "fechado" })
 
       toast({
@@ -99,10 +103,14 @@ const PedidosPage = () => {
     }
   }
 
-  const reabrirComanda = (id: number) => {
+  const reabrirComanda = async (id: number) => {
     const pedido = pedidos.find((p) => p.id === id)
     if (pedido) {
-      updatePedido({ ...pedido, status: "aberto" })
+      try {
+        await updatePedido({ ...pedido, status: "aberto" })
+      } catch {
+        return
+      }
       setSelectedPedido({ ...pedido, status: "aberto" })
 
       toast({
@@ -115,8 +123,12 @@ const PedidosPage = () => {
     }
   }
 
-  const excluirComanda = (id: number) => {
-    deletePedido(id)
+  const excluirComanda = async (id: number) => {
+    try {
+      await deletePedido(id)
+    } catch {
+      return
+    }
     onClose()
 
     toast({

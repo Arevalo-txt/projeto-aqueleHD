@@ -142,6 +142,7 @@ const EstoquePage = () => {
       return
     }
 
+    try {
     if (editId !== null) {
       const itemAntes = estoque.find((e) => e.id === editId)
       await updateItemEstoque({ ...formData, id: editId, ultimaAtualizacao: new Date() })
@@ -179,6 +180,9 @@ const EstoquePage = () => {
       })
       toast({ title: "Item adicionado", description: `${formData.nome} adicionado.`, status: "success", duration: 3000 })
     }
+    } catch {
+      return // o erro já foi exibido pelo DataContext
+    }
     resetForm()
     onClose()
     carregarLogs()
@@ -198,9 +202,13 @@ const EstoquePage = () => {
     onOpen()
   }
 
-  const handleDelete = (id: number, nome: string) => {
+  const handleDelete = async (id: number, nome: string) => {
     if (window.confirm(`Tem certeza que deseja excluir "${nome}"?`)) {
-      deleteItemEstoque(id)
+      try {
+        await deleteItemEstoque(id)
+      } catch {
+        return
+      }
       toast({ title: "Item excluído", description: `${nome} foi removido.`, status: "error", duration: 3000 })
     }
   }
@@ -232,7 +240,11 @@ const EstoquePage = () => {
       novaQuantidade -= quantidadeAjuste
     }
 
-    await updateItemEstoque({ ...itemAjuste, quantidade: novaQuantidade, ultimaAtualizacao: new Date() })
+    try {
+      await updateItemEstoque({ ...itemAjuste, quantidade: novaQuantidade, ultimaAtualizacao: new Date() })
+    } catch {
+      return
+    }
 
     await registrarLogEstoque({
       itemId: itemAjuste.id,

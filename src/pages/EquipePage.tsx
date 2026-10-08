@@ -92,7 +92,7 @@ const EquipePage = () => {
       }
       onClose()
     } catch {
-      toast({ title: "Erro ao salvar", status: "error" })
+      // o erro já foi exibido pelo DataContext
     }
   }
 
@@ -102,7 +102,11 @@ const EquipePage = () => {
       return
     }
     if (window.confirm("Deseja mesmo remover este funcionário?")) {
-      await deleteUsuario(id)
+      try {
+        await deleteUsuario(id)
+      } catch {
+        return
+      }
       toast({ title: "Usuário removido", status: "info" })
     }
   }

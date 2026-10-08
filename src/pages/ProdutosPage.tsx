@@ -174,7 +174,7 @@ const ProdutosPage = () => {
     }))
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.nome || !formData.categoria || formData.preco <= 0) {
       toast({
         title: "Erro",
@@ -185,11 +185,17 @@ const ProdutosPage = () => {
       return
     }
 
+    try {
+      if (editId !== null) {
+        await updateProduto({ ...formData, id: editId })
+      } else {
+        await addProduto(formData)
+      }
+    } catch {
+      return
+    }
+
     if (editId !== null) {
-      updateProduto({
-        ...formData,
-        id: editId,
-      })
       toast({
         title: "Produto atualizado",
         description: `${formData.nome} atualizado com sucesso.`,
@@ -197,7 +203,6 @@ const ProdutosPage = () => {
         duration: 3000,
       })
     } else {
-      addProduto(formData)
       toast({
         title: "Produto adicionado",
         description: `${formData.nome} adicionado com sucesso.`,
@@ -228,9 +233,13 @@ const ProdutosPage = () => {
     onOpen()
   }
 
-  const handleDelete = (id: number, nome: string) => {
+  const handleDelete = async (id: number, nome: string) => {
     if (window.confirm(`Tem certeza que deseja excluir "${nome}"?`)) {
-      deleteProduto(id)
+      try {
+        await deleteProduto(id)
+      } catch {
+        return
+      }
       toast({
         title: "Produto excluído",
         description: `${nome} foi removido.`,

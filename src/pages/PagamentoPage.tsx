@@ -27,7 +27,7 @@ import {
 import { motion } from "framer-motion"
 import { QRCodeSVG } from "qrcode.react"
 import { FiCreditCard, FiDollarSign, FiSmartphone, FiCheck, FiPrinter, FiAlertTriangle, FiArrowLeft, FiPlus, FiMinus, FiTag } from "react-icons/fi"
-import { useData, type Pedido, type Venda } from "../context/DataContext"
+import { useData, type Pedido } from "../context/DataContext"
 
 type MetodoPagamento = "pix" | "dinheiro" | "cartao_credito" | "cartao_debito"
 
@@ -38,7 +38,7 @@ const PagamentoPage = () => {
   const { pedidoId } = useParams<{ pedidoId: string }>()
   const navigate = useNavigate()
   const toast = useToast()
-  const { getPedido, updatePedido, addVenda, pedidos } = useData()
+  const { getPedido, pagarPedido, loading } = useData()
 
   const [metodoPagamento, setMetodoPagamento] = useState<MetodoPagamento>("pix")
   const [valorRecebido, setValorRecebido] = useState("")
@@ -49,10 +49,13 @@ const PagamentoPage = () => {
   const [erro, setErro] = useState<string | null>(null)
 
   useEffect(() => {
+    // Ao abrir a URL direto (ou recarregar), espera os dados chegarem antes de procurar o pedido
+    if (loading) return
     if (pedidoId) {
       const pedidoEncontrado = getPedido(Number(pedidoId))
 
       if (pedidoEncontrado) {
+        setErro(null)
         setPedido(pedidoEncontrado)
         if (pedidoEncontrado.status === "pago") {
           setPagamentoFinalizado(true)
@@ -69,7 +72,7 @@ const PagamentoPage = () => {
         setCarregando(false)
       }
     }
-  }, [pedidoId, getPedido])
+  }, [pedidoId, getPedido, loading])
 
   const valorTotal = pedido ? pedido.itens.reduce((total, item) => total + item.preco * item.quantidade, 0) : 0
 
@@ -79,7 +82,7 @@ const PagamentoPage = () => {
     return valor > valorTotal ? valor - valorTotal : 0
   }
 
-  const handleFinalizarPagamento = () => {
+  const handleFinalizarPagamento = async () => {
     if (!pedido) return
     setProcessando(true)
 
@@ -94,36 +97,11 @@ const PagamentoPage = () => {
       return
     }
 
-    setTimeout(() => {
-      const valorRecebidoNum = valorRecebido ? Number.parseFloat(valorRecebido.replace(",", ".")) : valorTotal
-      const trocoCalculado = calcularTroco()
-
-      const pedidoPago: Pedido = {
-        ...pedido,
-        status: "pago",
-        formaPagamento: metodoPagamento,
-        valorRecebido: valorRecebidoNum,
-        troco: trocoCalculado,
-      }
-
-      updatePedido(pedidoPago)
-
-      const novaVenda: Omit<Venda, "id"> = {
-        pedidoId: pedido.id,
-        valor: valorTotal,
-        formaPagamento: metodoPagamento,
-        data: new Date(),
-        itensVendidos: pedido.itens.map((item) => ({
-          nome: item.nome,
-          quantidade: item.quantidade,
-          valorUnitario: item.preco,
-          adicionais: item.adicionais || [],
-          removidos: item.removidos || [],
-        })),
-      }
-
-      addVenda(novaVenda)
-      setProcessando(false)
+    try {
+      const valorRecebidoNum = valorRecebido ? Number.parseFloat(valorRecebido.replace(",", ".")) : undefined
+      // Total, troco, venda e baixa de estoque são calculados e gravados pelo servidor
+      const pedidoPago = await pagarPedido(pedido.id, metodoPagamento, valorRecebidoNum)
+      setPedido(pedidoPago)
       setPagamentoFinalizado(true)
 
       toast({
@@ -132,7 +110,11 @@ const PagamentoPage = () => {
         status: "success",
         duration: 5000,
       })
-    }, 1500)
+    } catch {
+      // o erro já foi exibido pelo DataContext
+    } finally {
+      setProcessando(false)
+    }
   }
 
   const imprimirComprovante = () => {

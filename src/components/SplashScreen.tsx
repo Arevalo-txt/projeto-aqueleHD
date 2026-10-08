@@ -1,5 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react"
 import { motion, AnimatePresence } from "framer-motion"
+import { useEffect, useState } from "react"
 
 const MotionBox = motion(Box)
 
@@ -69,7 +70,22 @@ interface SplashScreenProps {
   isVisible: boolean
 }
 
+// O back-end no plano gratuito do Render "dorme" após inatividade e pode levar
+// cerca de um minuto para responder; após alguns segundos, avisa o usuário.
+const AVISO_SERVIDOR_MS = 5000
+
 const SplashScreen = ({ isVisible }: SplashScreenProps) => {
+  const [demorando, setDemorando] = useState(false)
+
+  useEffect(() => {
+    if (!isVisible) {
+      setDemorando(false)
+      return
+    }
+    const timer = setTimeout(() => setDemorando(true), AVISO_SERVIDOR_MS)
+    return () => clearTimeout(timer)
+  }, [isVisible])
+
   return (
     <AnimatePresence>
       {isVisible && (
@@ -172,6 +188,12 @@ const SplashScreen = ({ isVisible }: SplashScreenProps) => {
             <Dot delay={0.15} />
             <Dot delay={0.30} />
           </Flex>
+
+          {demorando && (
+            <Text color="whiteAlpha.700" fontSize="sm" textAlign="center" maxW="320px" px={4}>
+              Iniciando o servidor… isso pode levar até 1 minuto no primeiro acesso.
+            </Text>
+          )}
         </MotionBox>
       )}
     </AnimatePresence>

@@ -64,7 +64,7 @@ const EditarPedidoPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure() // Vazia comanda modal
   const { isOpen: isExtraOpen, onOpen: onExtraOpen, onClose: onExtraClose } = useDisclosure()
 
-  const { produtos, getPedido, updatePedido } = useData()
+  const { produtos, getPedido, updatePedido, loading } = useData()
 
   const [itensPedido, setItensPedido] = useState<ItemPedido[]>([])
   const [observacaoGlobal, setObservacaoGlobal] = useState<{ [key: number]: string }>({})
@@ -81,6 +81,8 @@ const EditarPedidoPage = () => {
   const categorias = [...new Set(produtos.map((p) => p.categoria))]
 
   useEffect(() => {
+    // Ao abrir a URL direto (ou recarregar), espera os dados chegarem antes de procurar o pedido
+    if (loading) return
     if (!pedidoId) {
       setErro("ID do pedido não informado")
       setCarregando(false)
@@ -98,7 +100,9 @@ const EditarPedidoPage = () => {
     setPedido(pedidoEncontrado)
 
     const itensConvertidos: ItemPedido[] = pedidoEncontrado.itens.map((item) => {
-      const produto = produtos.find((p) => p.nome === item.nome)
+      const produto =
+        (item.produtoId != null ? produtos.find((p) => p.id === item.produtoId) : undefined) ??
+        produtos.find((p) => p.nome === item.nome)
       if (!produto) {
         const tempProduto = {
           id: -1,
@@ -127,7 +131,7 @@ const EditarPedidoPage = () => {
 
     setItensPedido(itensConvertidos)
     setCarregando(false)
-  }, [pedidoId, getPedido, produtos])
+  }, [pedidoId, getPedido, produtos, loading])
 
   const abrirModalExtras = (produto: Produto) => {
     if (produto.personalizacaoAtiva) {
@@ -203,7 +207,7 @@ const EditarPedidoPage = () => {
     return itensPedido.reduce((total, item) => total + (calcularPrecoUnitarioItem(item) * item.quantidade), 0)
   }
 
-  const salvarComanda = () => {
+  const salvarComanda = async () => {
     if (!pedido) return
 
     if (itensPedido.length === 0) {
@@ -214,6 +218,7 @@ const EditarPedidoPage = () => {
     const pedidoAtualizado = {
       ...pedido,
       itens: itensPedido.map((item) => ({
+        produtoId: item.produto.id > 0 ? item.produto.id : undefined,
         nome: item.produto.nome,
         quantidade: item.quantidade,
         preco: calcularPrecoUnitarioItem(item), // Agora o preço é o base + adicionais
@@ -225,7 +230,11 @@ const EditarPedidoPage = () => {
       valorTotal: calcularTotal(),
     }
 
-    updatePedido(pedidoAtualizado)
+    try {
+      await updatePedido(pedidoAtualizado)
+    } catch {
+      return
+    }
 
     toast({
       title: "Comanda atualizada",
@@ -237,10 +246,14 @@ const EditarPedidoPage = () => {
     navigate(`/pedidos`)
   }
 
-  const confirmarSalvarVazia = () => {
+  const confirmarSalvarVazia = async () => {
     if (!pedido) return
     const pedidoAtualizado = { ...pedido, itens: [], valorTotal: 0 }
-    updatePedido(pedidoAtualizado)
+    try {
+      await updatePedido(pedidoAtualizado)
+    } catch {
+      return
+    }
     onClose()
     toast({
       title: "Comanda atualizada",
