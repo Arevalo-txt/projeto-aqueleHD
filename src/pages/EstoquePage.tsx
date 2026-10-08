@@ -143,43 +143,43 @@ const EstoquePage = () => {
     }
 
     try {
-    if (editId !== null) {
-      const itemAntes = estoque.find((e) => e.id === editId)
-      await updateItemEstoque({ ...formData, id: editId, ultimaAtualizacao: new Date() })
+      if (editId !== null) {
+        const itemAntes = estoque.find((e) => e.id === editId)
+        await updateItemEstoque({ ...formData, id: editId, ultimaAtualizacao: new Date() })
 
-      if (itemAntes && itemAntes.quantidade !== formData.quantidade) {
-        const diff = formData.quantidade - itemAntes.quantidade
+        if (itemAntes && itemAntes.quantidade !== formData.quantidade) {
+          const diff = formData.quantidade - itemAntes.quantidade
+          await registrarLogEstoque({
+            itemId: editId,
+            itemNome: formData.nome,
+            tipo: diff > 0 ? "entrada" : "saida",
+            quantidade: Math.abs(diff),
+            quantidadeAnterior: itemAntes.quantidade,
+            quantidadeNova: formData.quantidade,
+            motivo: "Edição direta do item",
+            usuarioId: currentUser?.id,
+            usuarioNome: currentUser?.nome,
+            dataHora: new Date(),
+          })
+        }
+
+        toast({ title: "Item atualizado", description: `${formData.nome} atualizado.`, status: "success", duration: 3000 })
+      } else {
+        const novoItem = await addItemEstoque({ ...formData, ultimaAtualizacao: new Date() })
         await registrarLogEstoque({
-          itemId: editId,
+          itemId: novoItem.id,
           itemNome: formData.nome,
-          tipo: diff > 0 ? "entrada" : "saida",
-          quantidade: Math.abs(diff),
-          quantidadeAnterior: itemAntes.quantidade,
+          tipo: "entrada",
+          quantidade: formData.quantidade,
+          quantidadeAnterior: 0,
           quantidadeNova: formData.quantidade,
-          motivo: "Edição direta do item",
+          motivo: "Cadastro inicial do item",
           usuarioId: currentUser?.id,
           usuarioNome: currentUser?.nome,
           dataHora: new Date(),
         })
+        toast({ title: "Item adicionado", description: `${formData.nome} adicionado.`, status: "success", duration: 3000 })
       }
-
-      toast({ title: "Item atualizado", description: `${formData.nome} atualizado.`, status: "success", duration: 3000 })
-    } else {
-      const novoItem = await addItemEstoque({ ...formData, ultimaAtualizacao: new Date() })
-      await registrarLogEstoque({
-        itemId: novoItem.id,
-        itemNome: formData.nome,
-        tipo: "entrada",
-        quantidade: formData.quantidade,
-        quantidadeAnterior: 0,
-        quantidadeNova: formData.quantidade,
-        motivo: "Cadastro inicial do item",
-        usuarioId: currentUser?.id,
-        usuarioNome: currentUser?.nome,
-        dataHora: new Date(),
-      })
-      toast({ title: "Item adicionado", description: `${formData.nome} adicionado.`, status: "success", duration: 3000 })
-    }
     } catch {
       return // o erro já foi exibido pelo DataContext
     }
